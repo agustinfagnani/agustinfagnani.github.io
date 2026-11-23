@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agustín Fagnani — AI & Automation</title>
+<meta name="description" content="Automatizo procesos de negocio con IA, datos e integraciones. Casos reales en e-commerce, salud y servicios.">
+<style>
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --text: #1c1917;
+    --muted: #57534e;
+    --border: #e7e5e4;
+    --accent: #0f766e;
+    --accent-soft: #ccfbf1;
+    --placeholder: #f5f5f4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0a09;
+      --surface: #1c1917;
+      --text: #f5f5f4;
+      --muted: #a8a29e;
+      --border: #292524;
+      --accent: #2dd4bf;
+      --accent-soft: #134e4a;
+      --placeholder: #292524;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0a09;
+    --surface: #1c1917;
+    --text: #f5f5f4;
+    --muted: #a8a29e;
+    --border: #292524;
+    --accent: #2dd4bf;
+    --accent-soft: #134e4a;
+    --placeholder: #292524;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 0 16px; }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 90%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 56px; gap: 12px; }
+  nav .brand { font-weight: 700; text-decoration: none; color: var(--text); white-space: nowrap; }
+  nav .links { display: flex; gap: 18px; align-items: center; font-size: 15px; }
+  nav .links a { color: var(--muted); text-decoration: none; }
+  nav .links a:hover { color: var(--text); }
+  .lang {
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer;
+  }
+  @media (max-width: 640px) { nav .links a { display: none; } }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 40px; align-items: center; padding-top: 64px; padding-bottom: 48px; }
+  .hero h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 0 0 16px; letter-spacing: -0.02em; }
+  .hero p.lead { font-size: 18px; color: var(--muted); margin: 0 0 24px; max-width: 560px; }
+  .hero img { width: 200px; height: 200px; border-radius: 50%; object-fit: cover; border: 4px solid var(--surface); box-shadow: 0 4px 24px rgb(0 0 0 / 0.12); }
+  .cta { display: inline-block; background: var(--accent); color: var(--bg); padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; }
+  .stats { display: flex; gap: 28px; flex-wrap: wrap; margin-top: 32px; }
+  .stats div strong { display: block; font-size: 22px; }
+  .stats div span { font-size: 14px; color: var(--muted); }
+  @media (max-width: 640px) {
+    .hero { grid-template-columns: 1fr; padding-top: 40px; }
+    .hero img { width: 120px; height: 120px; order: -1; }
+  }
+
+  section { padding: 48px 0; border-top: 1px solid var(--border); }
+  section h2 { font-size: 26px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  section p.sub { color: var(--muted); margin: 0 0 28px; }
+
+  /* Servicios */
+  .services { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+  .service { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .service h3 { margin: 0 0 6px; font-size: 17px; }
+  .service p { margin: 0; color: var(--muted); font-size: 15px; }
+
+  /* Casos */
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .filters button {
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+    border-radius: 999px; padding: 6px 14px; font-size: 14px; cursor: pointer;
+  }
+  .filters button.active { background: var(--accent-soft); color: var(--text); border-color: var(--accent); }
+  .cases { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+  .case {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+    cursor: pointer; display: flex; flex-direction: column; text-align: left; padding: 0; color: inherit; font: inherit;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .case:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgb(0 0 0 / 0.08); }
+  .case .body { padding: 16px 18px 18px; }
+  .case .tag { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); font-weight: 600; }
+  .case h3 { margin: 4px 0 8px; font-size: 17px; line-height: 1.3; }
+  .case p { margin: 0; color: var(--muted); font-size: 14px; }
+
+  .shot { aspect-ratio: 16 / 10; width: 100%; background: var(--placeholder); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: left top; display: block; }
+  .shot .ph { font-size: 13px; color: var(--muted); padding: 12px; text-align: center; border: 2px dashed var(--border); border-radius: 8px; margin: 12px; }
+
+  /* Detalle */
+  dialog {
+    border: none; border-radius: 16px; padding: 0; max-width: 760px; width: calc(100% - 32px);
+    background: var(--surface); color: var(--text); max-height: 90vh;
+  }
+  dialog::backdrop { background: rgb(0 0 0 / 0.55); }
+  dialog .inner { padding: 28px; }
+  dialog .close { position: sticky; top: 0; float: right; margin: 12px; border: none; background: var(--placeholder); color: var(--text); width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer; }
+  dialog h3 { font-size: 22px; margin: 4px 0 4px; line-height: 1.25; }
+  dialog .client { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
+  dialog h4 { margin: 22px 0 6px; font-size: 15px; text-transform: uppercase; letter-spacing: .05em; color: var(--accent); }
+  dialog ul { margin: 0; padding-left: 20px; }
+  dialog li { margin-bottom: 6px; }
+  dialog .shots { display: grid; gap: 12px; margin-top: 20px; }
+  dialog .shots .shot { border-radius: 10px; aspect-ratio: auto; min-height: 120px; }
+  dialog .shots .shot img { height: auto; object-fit: contain; }
+  .tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tech span { font-size: 13px; background: var(--placeholder); border-radius: 6px; padding: 3px 8px; }
+
+  /* Sobre mí / contacto */
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .about p { margin: 0 0 12px; }
+  @media (max-width: 640px) { .about { grid-template-columns: 1fr; } }
+  .contact-links { display: flex; gap: 12px; flex-wrap: wrap; }
+  .contact-links a { border: 1px solid var(--border); background: var(--surface); padding: 10px 16px; border-radius: 8px; text-decoration: none; color: var(--text); }
+  footer { padding: 32px 0 48px; color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#">Agustín Fagnani</a>
+    <div class="links">
+      <a href="#servicios" data-i18n="nav_services"></a>
+      <a href="#casos" data-i18n="nav_cases"></a>
+      <a href="#sobre-mi" data-i18n="nav_about"></a>
+      <a href="#contacto" data-i18n="nav_contact"></a>
+      <button class="lang" id="langBtn" type="button">EN</button>
+    </div>
+  </div>
+</nav>
+
+<header class="wrap hero">
+  <div>
+    <h1 data-i18n="hero_title"></h1>
+    <p class="lead" data-i18n="hero_lead"></p>
+    <a class="cta" href="#casos" data-i18n="hero_cta"></a>
+    <div class="stats">
+      <div><strong>7+</strong><span data-i18n="stat_years"></span></div>
+      <div><strong data-i18n="stat_rows_n"></strong><span data-i18n="stat_rows"></span></div>
+      <div><strong>8</strong><span data-i18n="stat_tools"></span></div>
+    </div>
+  </div>
+  <img src="img/foto.jpg" alt="Agustín Fagnani">
+</header>
+
+<section id="servicios">
+  <div class="wrap">
+    <h2 data-i18n="services_title"></h2>
+    <p class="sub" data-i18n="services_sub"></p>
+    <div class="services" id="services"></div>
+  </div>
+</section>
+
+<section id="escala">
+  <div class="wrap">
+    <h2 data-i18n="scale_title"></h2>
+    <p class="sub" data-i18n="scale_sub"></p>
+    <div class="services" id="scale"></div>
+  </div>
+</section>
+
+<section id="casos">
+  <div class="wrap">
+    <h2 data-i18n="cases_title"></h2>
+    <p class="sub" data-i18n="cases_sub"></p>
+    <div class="filters" id="filters"></div>
+    <div class="cases" id="cases"></div>
+  </div>
+</section>
+
+<section id="sobre-mi">
+  <div class="wrap">
+    <h2 data-i18n="about_title"></h2>
+    <div class="about">
+      <div><p data-i18n="about_p1"></p><p data-i18n="about_p2"></p></div>
+      <div><p data-i18n="about_p3"></p><p data-i18n="about_p4"></p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="wrap">
+    <h2 data-i18n="contact_title"></h2>
+    <p class="sub" data-i18n="contact_sub"></p>
+    <div class="contact-links">
+      <a href="mailto:agustin.fagnani@gmail.com">agustin.fagnani@gmail.com</a>
+      <a href="https://github.com/agustinfagnani" target="_blank" rel="noopener">GitHub</a>
+      <!-- LinkedIn: agregar cuando el perfil esté reactivado -->
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" data-i18n="footer"></div>
+</footer>
+
+<dialog id="detail">
+  <button class="close" type="button" aria-label="Cerrar" onclick="document.getElementById('detail').close()">✕</button>
+  <div class="inner" id="detailInner"></div>
+</dialog>
+
+<script>
+// Textos fijos de la página. Los casos están más abajo, en CASES.
+const UI = {
+  es: {
+    nav_services: "Servicios", nav_cases: "Casos", nav_about: "Sobre mí", nav_contact: "Contacto",
+    hero_title: "Automatizo procesos de negocio con IA, datos e integraciones.",
+    hero_lead: "Data Scientist con más de 7 años de experiencia en empresas grandes, trabajando con bases de miles de millones de registros. Conecto las herramientas que tu equipo ya usa —tienda online, planillas, Gmail, WhatsApp, Claude— para sacar del medio el trabajo manual.",
+    hero_cta: "Ver casos reales",
+    stat_years: "años en datos e IA", stat_tools: "herramientas en producción para un solo cliente",
+    stat_rows_n: "Miles de millones", stat_rows: "de registros en las bases con las que trabajo",
+    scale_title: "Más allá de las pymes: datos a escala empresarial",
+    scale_sub: "Mi trabajo de todos los días es en empresas grandes: banca, ad tech y marketplaces internacionales.",
+    services_title: "Qué puedo hacer por tu negocio",
+    services_sub: "Soluciones a medida, en producción, que tu equipo usa todos los días.",
+    cases_title: "Casos reales",
+    cases_sub: "Proyectos en uso real. Los nombres de los clientes se reservan por confidencialidad; los resultados son reales.",
+    filter_all: "Todos",
+    about_title: "Sobre mí",
+    about_p1: "Soy Licenciado en Informática y trabajo hace más de 7 años en Data Science, Machine Learning e IA aplicada, en fintech, banca, ad tech y marketplaces, en equipos internacionales 100% en inglés.",
+    about_p2: "En los últimos dos años me enfoqué en agentes de IA con Claude y MCP que hoy usan equipos de negocio a diario.",
+    about_p3: "En paralelo, desde hace un año desarrollo herramientas de automatización para pymes: e-commerce, Google Workspace, WhatsApp e integraciones con APIs.",
+    about_p4: "Me importa que lo que construyo se use: herramientas simples para quien las opera, robustas por dentro y documentadas.",
+    contact_title: "Hablemos",
+    contact_sub: "Contame qué proceso te está comiendo horas y vemos cómo automatizarlo.",
+    footer: "© 2026 Agustín Fagnani · Zárate, Buenos Aires, Argentina · Trabajo remoto en español e inglés",
+    d_problem: "El problema", d_solution: "La solución", d_result: "El resultado", d_tech: "Tecnologías",
+    ph: "Captura pendiente"
+  },
+  en: {
+    nav_services: "Services", nav_cases: "Case studies", nav_about: "About", nav_contact: "Contact",
+    hero_title: "I automate business processes with AI, data and integrations.",
+    hero_lead: "Data Scientist with 7+ years of experience at large companies, working with databases of billions of records. I connect the tools your team already uses —online store, spreadsheets, Gmail, WhatsApp, Claude— to take manual work out of the way.",
+    hero_cta: "See real case studies",
+    stat_years: "years in data & AI", stat_tools: "tools in production for a single client",
+    stat_rows_n: "Billions", stat_rows: "of records in the databases I work with",
+    scale_title: "Beyond small business: enterprise-scale data",
+    scale_sub: "My day-to-day work is at large companies: banking, ad tech and international marketplaces.",
+    services_title: "What I can do for your business",
+    services_sub: "Custom solutions, in production, used by your team every day.",
+    cases_title: "Case studies",
+    cases_sub: "Projects in real use. Client names are withheld for confidentiality; the results are real.",
+    filter_all: "All",
+    about_title: "About me",
+    about_p1: "I hold a degree in Computer Science and have spent 7+ years in Data Science, Machine Learning and applied AI across fintech, banking, ad tech and marketplaces, in fully English-speaking international teams.",
+    about_p2: "Over the past two years I've focused on AI agents built with Claude and MCP that business teams use every day.",
+    about_p3: "In parallel, for the past year I've been building automation tools for small businesses: e-commerce, Google Workspace, WhatsApp and API integrations.",
+    about_p4: "I care about what I build actually being used: simple for the people who operate it, robust inside, and documented.",
+    contact_title: "Let's talk",
+    contact_sub: "Tell me which process is eating up your hours and let's see how to automate it.",
+    footer: "© 2026 Agustín Fagnani · Buenos Aires, Argentina · Remote work in English and Spanish",
+    d_problem: "The problem", d_solution: "The solution", d_result: "The result", d_tech: "Tech",
+    ph: "Screenshot pending"
+  }
+};
+
+const SERVICES = [
+  { es: ["Automatización de e-commerce", "Stock sincronizado entre tienda online y marketplaces, publicación masiva, pedidos y envíos."],
+    en: ["E-commerce automation", "Stock synced across online store and marketplaces, bulk listings, orders and shipping."] },
+  { es: ["Agentes e integraciones con IA", "Asistentes con Claude u otros LLMs conectados a tus datos y herramientas vía MCP y APIs."],
+    en: ["AI agents & integrations", "Assistants built on Claude or other LLMs, connected to your data and tools via MCP and APIs."] },
+  { es: ["Google Workspace y Apps Script", "Planillas que se actualizan solas, paneles web internos, documentos y mails automáticos."],
+    en: ["Google Workspace & Apps Script", "Self-updating spreadsheets, internal web dashboards, automatic documents and emails."] },
+  { es: ["Datos y analytics", "Pipelines, dashboards y análisis que responden preguntas de negocio concretas."],
+    en: ["Data & analytics", "Pipelines, dashboards and analyses that answer concrete business questions."] }
+];
+
+const SCALE = [
+  { es: ["Bases de datos masivas", "Miles de millones de registros en Snowflake y BigQuery. Queries SQL tan complejas como el problema lo requiera, optimizadas para correr rápido."],
+    en: ["Massive databases", "Billions of records in Snowflake and BigQuery. SQL queries as complex as the problem demands, optimized to run fast."] },
+  { es: ["Modelos predictivos en producción", "Clasificación, regresión, clustering y NLP con XGBoost y scikit-learn, desde la definición hasta producción, en banca, fintech y marketplaces."],
+    en: ["Predictive models in production", "Classification, regression, clustering and NLP with XGBoost and scikit-learn, from scoping to production, in banking, fintech and marketplaces."] },
+  { es: ["Análisis de datos para negocio", "Más de 200 análisis a medida para equipos de negocio: cruzar fuentes, interpretar resultados y convertirlos en decisiones."],
+    en: ["Business data analysis", "200+ custom analyses for business teams: cross-referencing sources, interpreting results and turning them into decisions."] },
+  { es: ["Pipelines y orquestación", "Pipelines de datos en Dagster y Airflow sobre AWS y GCP, corriendo de forma programada y mantenidos en producción."],
+    en: ["Pipelines & orchestration", "Data pipelines on Dagster and Airflow over AWS and GCP, running on schedule and maintained in production."] }
+];
+
+const CATS = {
+  ecommerce: { es: "E-commerce", en: "E-commerce" },
+  ia: { es: "IA y agentes", en: "AI & agents" },
+  workspace: { es: "Google Workspace", en: "Google Workspace" },
+  data: { es: "Data Science", en: "Data Science" },
+};
+
+// Capturas: cada caso busca img/casos/<id>-1.jpg, -2.jpg, ... Si el archivo no existe se muestra
+// un recuadro "Captura pendiente" con la descripción. La -1 es la imagen de la tarjeta.
+const CASES = [
+  {
+    id: "01", cats: ["ecommerce", "workspace"],
+    shots: ["Estadísticas con gráfico de evolución", "Movimientos", "Sincronización tienda ↔ MercadoLibre", "Inventario de indumentaria"],
+    es: {
+      tag: "E-commerce · Inventario",
+      title: "Stock sincronizado solo en la tienda online y en MercadoLibre",
+      summary: "Una persona pasaba varias horas por día descontando stock a mano. Hoy se actualiza solo y bajaron las ventas sin stock.",
+      client: "Empresa argentina de packaging personalizado con tienda online y MercadoLibre.",
+      problem: ["El stock se actualizaba a mano: una persona dedicaba varias horas por día a descontar unidad por unidad en la tienda.", "Resultado frecuente: ventas sin stock, entregas más largas de lo prometido y clientes molestos.", "La app de inventario la había hecho alguien que ya no estaba en la empresa: nadie podía modificarla."],
+      solution: ["Sincronización automática cada hora con Tiendanube y MercadoLibre, descontando también ventas recientes todavía no cargadas.", "Panel web de inventario: el stock se calcula siempre a partir de los movimientos y no deja descontar más de lo que hay.", "Publicación por lotes de cientos de productos en MercadoLibre.", "Inventario de materiales, insumos e indumentaria, con roles por usuario.", "Estadísticas sobre todo el histórico y reportes automáticos en Excel por mail.", "Precarga de movimientos: el sistema propone los descuentos de cada pedido y el equipo confirma con un click."],
+      result: ["El stock de la tienda y de MercadoLibre se mantiene solo: varias horas por día liberadas.", "Bajaron las ventas sin stock y los reclamos por demora.", "Más de 77.000 movimientos registrados, ~65 por día, en uso diario."]
+    },
+    en: {
+      tag: "E-commerce · Inventory",
+      title: "Stock synced automatically across the online store and MercadoLibre",
+      summary: "One person spent several hours a day deducting stock by hand. Now it updates itself and out-of-stock sales dropped.",
+      client: "Argentine custom-packaging company selling through its online store and MercadoLibre, Latin America's largest marketplace.",
+      problem: ["Stock was updated by hand: one person spent several hours a day deducting units one by one in the store.", "Frequent result: out-of-stock sales, late deliveries and unhappy customers.", "The inventory app had been built by someone who had left the company: nobody could change it."],
+      solution: ["Automatic hourly sync with Tiendanube and MercadoLibre, also subtracting recent sales not yet recorded.", "Web inventory panel: stock is always calculated from movements and the system blocks over-deducting.", "Bulk publishing of hundreds of products to MercadoLibre.", "Inventory for materials, supplies and apparel, with per-user roles.", "Analytics over the full history and automated Excel reports by email.", "Auto-proposed movements: the system proposes each order's deductions and the team confirms with one click."],
+      result: ["Store and MercadoLibre stock now updates itself: several hours a day freed up.", "Fewer out-of-stock sales and delay complaints.", "77,000+ movements recorded, ~65 per day, in daily use."]
+    },
+    tech: ["Google Apps Script", "Google Sheets", "Python", "GitHub Actions", "Tiendanube API", "MercadoLibre API"]
+  },
+  {
+    id: "02", cats: ["ecommerce", "workspace"],
+    shots: ["Planilla con la casilla «Crear orden»", "Orden de impresión generada", "Mail de aviso de despacho parcial"],
+    es: {
+      tag: "Workflow · Pedidos",
+      title: "De media jornada escribiendo órdenes a un click",
+      summary: "~40 pedidos por día que una persona escribía a mano. Ahora la orden se genera sola y el aviso de despacho llega en el mismo hilo de Gmail.",
+      client: "Empresa argentina de packaging personalizado con tienda online.",
+      problem: ["Cada pedido (unos 40 por día) necesita una orden de impresión. Una persona dedicaba casi media jornada a escribirlas.", "Avisar al cliente que su pedido había salido también era manual."],
+      solution: ["Se tilda «Crear orden» en la planilla de pedidos y el sistema arma la orden con datos de la tienda online (o de los mails con el cliente) y la guarda en Drive.", "Aviso de despacho: se marcan los ítems que salieron y el sistema redacta el mail (completo, parcial o cierre) y responde en la conversación de Gmail que ya tenía el cliente."],
+      result: ["Cero órdenes escritas a mano: casi media jornada liberada por día.", "El cliente recibe el aviso en el hilo donde ya hablaba con la empresa."]
+    },
+    en: {
+      tag: "Workflow · Orders",
+      title: "From half a workday writing orders to one click",
+      summary: "~40 orders a day written by hand. Now the order generates itself and the dispatch notice lands in the same Gmail thread.",
+      client: "Argentine custom-packaging company with an online store.",
+      problem: ["Every order (about 40 a day) needs a print order. One person spent almost half their workday writing them.", "Notifying customers that their order had shipped was also manual."],
+      solution: ["Tick «Create order» in the order sheet and the system builds the order from online-store data (or the customer's emails) and saves it to Drive.", "Dispatch notice: mark the shipped items and the system drafts the email (complete, partial or closing) and replies in the customer's existing Gmail thread."],
+      result: ["Zero hand-written orders: almost half a workday freed up daily.", "Customers get the notice in the thread they already use."]
+    },
+    tech: ["Google Apps Script", "Google Sheets", "Google Docs", "Gmail", "Tiendanube API"]
+  },
+  {
+    id: "03", cats: ["ecommerce", "workspace"],
+    shots: ["Panel de control de pedidos", "Planilla de órdenes de la tienda"],
+    es: {
+      tag: "Dashboard · Pedidos",
+      title: "Ningún pedido trabado sin que nadie lo note",
+      summary: "Panel que muestra en una pantalla los pedidos que necesitan atención. Antes se escapaban hasta que el cliente reclamaba.",
+      client: "Empresa argentina de packaging personalizado con tienda online.",
+      problem: ["Con ~40 pedidos por día, algunos quedaban trabados (falta de diseño, de pago o de material) sin que nadie lo notara.", "Las órdenes de la tienda online se seguían a mano."],
+      solution: ["Panel de control que lee en vivo la planilla de pedidos y muestra solo lo que necesita atención: falta diseño, falta pago, órdenes sin imprimir, demorados, despachos parciales y faltantes.", "Planilla que se completa sola cada 10 minutos con las órdenes de Tiendanube, su tipo y su estado de pago."],
+      result: ["Los pedidos trabados ya no se escapan.", "Las órdenes de la tienda se registran solas."]
+    },
+    en: {
+      tag: "Dashboard · Orders",
+      title: "No stuck order goes unnoticed",
+      summary: "One screen showing the orders that need attention. Before, they slipped through until the customer complained.",
+      client: "Argentine custom-packaging company with an online store.",
+      problem: ["With ~40 orders a day, some got stuck (missing design, payment or material) and nobody noticed.", "Online-store orders were tracked by hand."],
+      solution: ["Control dashboard reading the order sheet live and showing only what needs attention: missing design or payment, unprinted, delayed, partial shipments and shortages.", "A sheet that fills itself every 10 minutes with Tiendanube orders, their type and payment status."],
+      result: ["Stuck orders no longer slip through.", "Online-store orders are recorded automatically."]
+    },
+    tech: ["Google Apps Script", "Google Sheets", "Gmail", "Tiendanube API"]
+  },
+  {
+    id: "04", cats: ["ecommerce", "workspace"],
+    shots: ["Panel con los envíos del día y sus estados", "Excel de carga masiva generado"],
+    es: {
+      tag: "Logística · Envíos",
+      title: "Los envíos del día en un solo archivo, con direcciones validadas",
+      summary: "En vez de cargar cada envío a mano en la web del correo, un panel arma el Excel del día y valida las direcciones.",
+      client: "Empresa argentina de packaging personalizado con tienda online.",
+      problem: ["Los envíos por correo (Andreani) se cargaban uno por uno en la web del correo.", "Las direcciones venían con errores de carga que hacían fallar o demorar envíos."],
+      solution: ["Se elige el día y el sistema saca nombre, DNI y dirección de cada orden.", "Valida provincia, ciudad y código postal contra las ~30.000 localidades oficiales del correo, corrigiendo errores típicos.", "Genera el Excel de carga masiva en el formato oficial; los casos dudosos quedan marcados para revisión."],
+      result: ["Todos los envíos del día se cargan de una vez.", "Prueba con un día real: 18 de 20 resueltos automáticamente, 0 errores."]
+    },
+    en: {
+      tag: "Logistics · Shipping",
+      title: "The day's shipments in one file, with validated addresses",
+      summary: "Instead of entering each shipment on the courier's website, a panel builds the day's upload file and validates addresses.",
+      client: "Argentine custom-packaging company with an online store.",
+      problem: ["Courier shipments (Andreani, a major Argentine carrier) were entered one by one on the carrier's website.", "Addresses had data-entry errors that caused failed or delayed shipments."],
+      solution: ["Pick the day and the system extracts name, ID and address from each order.", "Validates province, city and postal code against the carrier's ~30,000 official localities, auto-fixing typical errors.", "Generates the bulk-upload Excel in the official format; doubtful cases are flagged for review."],
+      result: ["All of the day's shipments are uploaded at once.", "Real-day test: 18 of 20 resolved automatically, 0 errors."]
+    },
+    tech: ["Google Apps Script", "Google Docs", "Google Sheets", "Excel"]
+  },
+  {
+    id: "05", cats: ["ia"],
+    shots: ["Panel de ranking de creativos", "Conversación con Claude analizando la cuenta"],
+    es: {
+      tag: "IA · Marketing",
+      title: "Análisis y gestión de anuncios en lenguaje natural con Claude",
+      summary: "Claude conectado a Meta Ads vía MCP, test de creativos armado por API y un panel con el ranking de piezas.",
+      client: "Empresa argentina de packaging personalizado con tienda online.",
+      problem: ["Armar campañas de prueba de creativos y seguir sus resultados era manual.", "Los resultados se pasaban por WhatsApp."],
+      solution: ["Claude conectado a la cuenta de Meta Ads mediante el conector MCP oficial, para analizar campañas preguntando en lenguaje natural.", "Campañas de test de creativos armadas por API, en varias rondas, con la misma estructura y presupuesto para comparar.", "Panel web con el ranking de piezas actualizado desde Meta y etiquetas editables por el equipo."],
+      result: ["El equipo ve en un link qué pieza rinde mejor, sin reportes por WhatsApp.", "El análisis se hace conversando con Claude sobre los datos reales.", "Guía reutilizable para conectar la cuenta de cualquier cliente."]
+    },
+    en: {
+      tag: "AI · Marketing",
+      title: "Ad analysis and management in natural language with Claude",
+      summary: "Claude connected to Meta Ads via MCP, a creative test built via API and a dashboard ranking the pieces.",
+      client: "Argentine custom-packaging company with an online store.",
+      problem: ["Setting up creative-testing campaigns and tracking results was manual.", "Results were shared over WhatsApp."],
+      solution: ["Claude connected to the Meta Ads account through Meta's official MCP connector, to analyze campaigns in natural language.", "Creative-testing campaigns built via API, across rounds, with identical structure and budget for fair comparison.", "Web dashboard ranking the pieces from live Meta data, with team-editable labels."],
+      result: ["The team sees in one link which piece performs best, no WhatsApp reports.", "Analysis happens by chatting with Claude over real data.", "Reusable playbook to connect any client's account."]
+    },
+    tech: ["Claude", "MCP", "Meta Marketing API", "Python", "Google Apps Script"]
+  },
+  {
+    id: "06", cats: ["workspace"],
+    shots: ["Ficha de paciente con historia clínica", "Turnos del día"],
+    es: {
+      tag: "Salud · Gestión",
+      title: "Historias clínicas, turnos y pacientes en un solo lugar",
+      summary: "Sistema para un consultorio dentro de su propia cuenta de Google: 1.307 historias migradas y hoy su herramienta principal.",
+      client: "Consultorio de nutrición.",
+      problem: ["Más de 1.300 historias clínicas en documentos Word repartidos en carpetas.", "El alta de cada paciente nueva se hacía a mano.", "Turnos, teléfonos, cobros y mensajes estaban dispersos."],
+      solution: ["Alta automática desde el formulario de ingreso: paciente, carpeta, ficha e historia precargada.", "Ficha por paciente con evolución de peso y composición corporal en gráficos.", "Turnos del día desde Google Calendar con estado de pago y de plan entregado.", "Biblioteca de mensajes de WhatsApp reutilizables.", "Migración automática de 1.307 de 1.366 historias en Word (96%)."],
+      result: ["Las historias pasaron de documentos sueltos a fichas consultables con evolución gráfica.", "Alta de pacientes automática.", "Hoy es la herramienta principal de trabajo del consultorio, sin servidores ni costos mensuales."]
+    },
+    en: {
+      tag: "Healthcare · Management",
+      title: "Patient records, appointments and contacts in one place",
+      summary: "A system for a practice inside its own Google account: 1,307 records migrated, now its main working tool.",
+      client: "Nutrition practice.",
+      problem: ["Over 1,300 patient records in Word documents scattered across folders.", "Onboarding each new patient was manual.", "Appointments, phone numbers, payments and messages were scattered."],
+      solution: ["Automatic onboarding from the intake form: patient, folder, record and pre-filled history.", "Patient record with weight and body-composition trend charts.", "Today's appointments from Google Calendar with payment and plan status.", "Reusable WhatsApp message library.", "Automated migration of 1,307 of 1,366 Word records (96%)."],
+      result: ["Records went from loose documents to searchable files with progress charts.", "Automatic patient onboarding.", "Now the practice's main working tool, with no servers or monthly fees."]
+    },
+    tech: ["Google Apps Script", "Google Sheets", "Google Forms", "Google Calendar", "Google Drive"]
+  },
+  {
+    id: "07", cats: ["ia"],
+    shots: ["Conversación de reserva de turno", "Turno creado en Google Calendar"],
+    es: {
+      tag: "IA · WhatsApp",
+      title: "Asistente de IA que agenda turnos por WhatsApp",
+      summary: "Prototipo funcional: entiende mensajes libres, agenda, reprograma y cancela en Google Calendar, y toma pedidos.",
+      client: "Prototipo funcional (prueba de concepto) para negocios con turnos o pedidos.",
+      problem: ["Los negocios chicos pierden tiempo respondiendo las mismas consultas y agendando turnos a mano, muchas veces fuera de horario."],
+      solution: ["Consulta disponibilidad, reserva, reprograma y cancela turnos en Google Calendar.", "Toma pedidos desde un catálogo y los registra en Google Sheets.", "Pide confirmación con botones antes de cualquier acción.", "Deriva a una persona cuando hace falta.", "Configurable por negocio sin tocar código, con el modelo de IA intercambiable."],
+      result: ["Prototipo funcionando de punta a punta: WhatsApp → IA → Calendar / Sheets → respuesta.", "Arquitectura lista para una instancia por negocio."]
+    },
+    en: {
+      tag: "AI · WhatsApp",
+      title: "AI assistant that books appointments on WhatsApp",
+      summary: "Working prototype: understands free-form messages, books, reschedules and cancels in Google Calendar, and takes orders.",
+      client: "Working prototype (proof of concept) for appointment- or order-based businesses.",
+      problem: ["Small businesses lose time answering the same questions and booking by hand, often after hours."],
+      solution: ["Checks availability, books, reschedules and cancels appointments in Google Calendar.", "Takes orders from a catalog into Google Sheets.", "Asks for button confirmation before any action.", "Hands off to a human when needed.", "Configurable per business without code changes, with a swappable AI model."],
+      result: ["End-to-end working prototype: WhatsApp → AI → Calendar / Sheets → reply.", "Architecture ready for one instance per business."]
+    },
+    tech: ["Python", "Flask", "WhatsApp Cloud API", "LLM tool calling", "Google Calendar API", "SQLite"]
+  },
+  {
+    id: "08", cats: ["ia"],
+    shots: ["Robot navegando el portal (video)", "Comprobante emitido en homologación"],
+    es: {
+      tag: "Automatización · Contabilidad",
+      title: "Datos de AFIP sin entrar al portal",
+      summary: "Robot para el Portal IVA, facturación electrónica por API y consolidación de planillas para un estudio contable.",
+      client: "Estudio contable (proyecto de prueba).",
+      problem: ["Mucho trabajo mensual repetitivo dentro del portal de AFIP/ARCA, cliente por cliente.", "Planillas de alícuotas de organismos públicos que había que unificar a mano."],
+      solution: ["Robot que entra al Portal IVA, crea la declaración jurada, importa libros de compras y ventas y descarga el borrador.", "Emisión de facturas electrónicas A, B y C por los Web Services oficiales.", "Consolidación automática de las planillas de alícuotas en una tabla final."],
+      result: ["Tareas del portal que se hacían a mano pasan a correr solas.", "Prueba de viabilidad completa: qué se puede sacar por API y qué requiere automatizar el portal."]
+    },
+    en: {
+      tag: "Automation · Accounting",
+      title: "Tax-authority data without the portal",
+      summary: "VAT-portal bot, e-invoicing via API and spreadsheet consolidation for an Argentine accounting firm.",
+      client: "Accounting firm in Argentina (pilot project).",
+      problem: ["Lots of repetitive monthly work in the tax authority portal (AFIP/ARCA), client by client.", "Tax-rate spreadsheets from government agencies merged by hand."],
+      solution: ["Bot that logs into the VAT portal, creates the return, imports ledgers and downloads the draft.", "E-invoicing (types A, B and C) through the official web services.", "Automatic consolidation of the tax-rate spreadsheets into one table."],
+      result: ["Portal tasks done by hand now run on their own.", "Complete feasibility test of what can be pulled via API vs. portal automation."]
+    },
+    tech: ["Python", "Playwright", "SOAP web services", "pandas"]
+  },
+  {
+    id: "09", cats: ["ia", "data"], shots: [],
+    es: {
+      tag: "IA · Agentes",
+      title: "Un agente de IA que responde preguntas de datos",
+      summary: "Agente sobre Claude con MCP que escribe y ejecuta las consultas. Lo usan 6 a 8 personas a diario.",
+      client: "Empresa de datos y publicidad de EE.UU. (trabajo en relación de dependencia, descripto a grandes rasgos).",
+      problem: ["Las personas de negocio dependían de alguien técnico para cada consulta de datos."],
+      solution: ["Primero un repositorio de consultas, después un generador con IA y finalmente un agente sobre Claude con MCP que entiende la pregunta, ejecuta la consulta y devuelve el resultado.", "Clasificación automática de los pedidos que llegaban por mail.", "Un segundo agente que corre modelos de marketing science en lenguaje natural."],
+      result: ["6 a 8 personas lo usan a diario, con ahorro de tiempo significativo.", "Más de 200 análisis a medida entregados."]
+    },
+    en: {
+      tag: "AI · Agents",
+      title: "An AI agent that answers data questions",
+      summary: "Agent on Claude with MCP that writes and runs the queries. Used daily by 6–8 people.",
+      client: "US data and advertising company (employment role, described at a high level).",
+      problem: ["Business users depended on a technical person for every data request."],
+      solution: ["First a query repository, then an AI query generator, and finally an agent on Claude with MCP that understands the question, runs the query and returns the result.", "Automatic classification of requests arriving by email.", "A second agent running marketing-science models in natural language."],
+      result: ["Used daily by 6–8 people, saving significant time.", "200+ custom analyses delivered."]
+    },
+    tech: ["Claude", "MCP", "Python", "SQL"]
+  },
+  {
+    id: "10", cats: ["data"], shots: [],
+    es: {
+      tag: "Data Science · Banca",
+      title: "Modelo predictivo de mejor oferta para un banco",
+      summary: "Modelo de XGBoost que decide qué producto ofrecerle a cada prospecto, aplicado a miles de prospectos.",
+      client: "Banco líder de Argentina (trabajo en relación de dependencia, descripto a grandes rasgos).",
+      problem: ["El banco necesitaba decidir qué oferta hacerle a cada prospecto, entre varios productos posibles, con datos y no por intuición."],
+      solution: ["Modelo \"First Best Offer\" con XGBoost, desarrollado de punta a punta: definición con el negocio, datos, modelado y puesta en producción.", "Extracción automática de datos de documentos con OCR, LangChain y la API de OpenAI."],
+      result: ["Modelo en producción aplicado a miles de prospectos para elegir la mejor oferta para cada uno."]
+    },
+    en: {
+      tag: "Data Science · Banking",
+      title: "Next-best-offer predictive model for a bank",
+      summary: "XGBoost model deciding which product to offer each prospect, applied to thousands of prospects.",
+      client: "Leading Argentine bank (employment role, described at a high level).",
+      problem: ["The bank needed to decide which offer to make each prospect, among several products, based on data rather than intuition."],
+      solution: ["\"First Best Offer\" XGBoost model, built end to end: scoping with the business, data, modeling and production deployment.", "Automated data extraction from documents with OCR, LangChain and the OpenAI API."],
+      result: ["Model in production, applied to thousands of prospects to pick the best offer for each."]
+    },
+    tech: ["Python", "XGBoost", "SQL", "OCR", "LangChain", "OpenAI API"]
+  },
+  {
+    id: "11", cats: ["data"], shots: [],
+    es: {
+      tag: "Data Engineering · Marketplace",
+      title: "Reconciliación de datos entre proveedores a gran escala",
+      summary: "Pipeline que unifica mapas de estadios de dos proveedores con matching de texto y geométrico: 50.000 eventos procesados.",
+      client: "Marketplace de entradas para eventos deportivos de EE.UU. (trabajo en relación de dependencia).",
+      problem: ["Dos proveedores describían las mismas secciones de cada estadio o teatro con nombres y formas distintas, lo que impedía cruzar sus datos."],
+      solution: ["Pipeline en Python con una cadena de chequeos de texto y de geometría (escalado, rotación y coincidencia de polígonos) para identificar la misma sección en ambos proveedores.", "Infraestructura en Snowflake y orquestación semanal en Dagster.", "Sistema de priorización de llamadas a APIs externas, recalculado minuto a minuto, para aprovechar al máximo el cupo disponible."],
+      result: ["Backfill de ~50.000 eventos y +1.000 eventos nuevos por semana procesados automáticamente."]
+    },
+    en: {
+      tag: "Data Engineering · Marketplace",
+      title: "Large-scale data reconciliation across providers",
+      summary: "Pipeline unifying venue maps from two providers with text and geometric matching: 50,000 events processed.",
+      client: "US sports-ticketing marketplace (employment role).",
+      problem: ["Two providers described the same sections of each venue with different names and shapes, making their data impossible to join."],
+      solution: ["Python pipeline with a chain of text and geometric checks (scaling, rotation and polygon matching) to identify the same section across providers.", "Snowflake data layer and weekly orchestration on Dagster.", "API-call prioritization system, recalculated every minute, to make the most of the available quota."],
+      result: ["Backfilled ~50,000 events and processes 1,000+ new events a week automatically."]
+    },
+    tech: ["Python", "Snowflake", "Dagster", "Plotly", "SQL"]
+  }
+];
+
+let lang = "es";
+try { lang = localStorage.getItem("lang") || (navigator.language.startsWith("es") ? "es" : "en"); } catch (e) {}
+let filter = "all";
+
+function shotHTML(caseId, n, label) {
+  return `<div class="shot"><img src="img/casos/${caseId}-${n}.jpg" alt="" data-label="${label}" loading="lazy" onerror="shotMissing(this)"></div>`;
+}
+
+// Si la captura todavía no existe, se saca el recuadro: el caso se muestra sin imagen.
+function shotMissing(img) {
+  img.closest(".shot").remove();
+}
+
+function render() {
+  document.documentElement.lang = lang;
+  document.getElementById("langBtn").textContent = lang === "es" ? "EN" : "ES";
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = UI[lang][el.dataset.i18n]; });
+
+  document.getElementById("services").innerHTML = SERVICES.map(s =>
+    `<div class="service"><h3>${s[lang][0]}</h3><p>${s[lang][1]}</p></div>`).join("");
+
+  document.getElementById("scale").innerHTML = SCALE.map(s =>
+    `<div class="service"><h3>${s[lang][0]}</h3><p>${s[lang][1]}</p></div>`).join("");
+
+  const filters = [["all", UI[lang].filter_all], ...Object.entries(CATS).map(([k, v]) => [k, v[lang]])];
+  document.getElementById("filters").innerHTML = filters.map(([k, label]) =>
+    `<button type="button" class="${k === filter ? "active" : ""}" data-f="${k}">${label}</button>`).join("");
+  document.querySelectorAll("#filters button").forEach(b => b.onclick = () => { filter = b.dataset.f; render(); });
+
+  document.getElementById("cases").innerHTML = CASES
+    .filter(c => filter === "all" || c.cats.includes(filter))
+    .map(c => `<button type="button" class="case" data-id="${c.id}">
+        ${c.shots.length ? shotHTML(c.id, 1, c.shots[0]) : ""}
+        <div class="body"><div class="tag">${c[lang].tag}</div><h3>${c[lang].title}</h3><p>${c[lang].summary}</p></div>
+      </button>`).join("");
+  document.querySelectorAll(".case").forEach(b => b.onclick = () => openCase(b.dataset.id));
+}
+
+function openCase(id) {
+  const c = CASES.find(x => x.id === id), t = c[lang], u = UI[lang];
+  const list = items => `<ul>${items.map(i => `<li>${i}</li>`).join("")}</ul>`;
+  document.getElementById("detailInner").innerHTML = `
+    <div class="tag" style="color:var(--accent);font-weight:600;font-size:13px;text-transform:uppercase;letter-spacing:.06em">${t.tag}</div>
+    <h3>${t.title}</h3>
+    <p class="client">${t.client}</p>
+    <h4>${u.d_problem}</h4>${list(t.problem)}
+    <h4>${u.d_solution}</h4>${list(t.solution)}
+    <h4>${u.d_result}</h4>${list(t.result)}
+    <h4>${u.d_tech}</h4><div class="tech">${c.tech.map(x => `<span>${x}</span>`).join("")}</div>
+    ${c.shots.length ? `<div class="shots">${c.shots.map((s, i) => shotHTML(c.id, i + 1, s)).join("")}</div>` : ""}`;
+  document.getElementById("detail").showModal();
+}
+
+document.getElementById("langBtn").onclick = () => {
+  lang = lang === "es" ? "en" : "es";
+  try { localStorage.setItem("lang", lang); } catch (e) {}
+  render();
+};
+document.getElementById("detail").addEventListener("click", e => { if (e.target.id === "detail") e.target.close(); });
+
+render();
+</script>
+</body>
+</html>
